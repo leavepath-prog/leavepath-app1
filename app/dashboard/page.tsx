@@ -1,17 +1,30 @@
 import { redirect } from "next/navigation";
+import { FREE_BETA } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import { sanitizeIntake, sanitizeScenario } from "@/lib/sanitizeIntake";
 import { DashboardClient } from "./DashboardClient";
+import { claimBetaPlan } from "./claimBetaPlan";
 
 export const metadata = { title: "Your LeavePath Plan" };
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ claim?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/dashboard");
+
+  // Free beta: attach the plan this link was made for, then tidy the URL.
+  const { claim } = await searchParams;
+  if (claim) {
+    await claimBetaPlan(claim, user);
+    redirect("/dashboard");
+  }
 
   const { data: plan } = await supabase
     .from("plans")
@@ -31,7 +44,9 @@ export default async function DashboardPage() {
             We can't find a plan yet
           </h1>
           <p style={{ margin: 0 }}>
-            If you've just paid, Stripe can take a few seconds to confirm. Refresh this page in a moment.
+            {FREE_BETA
+              ? "Your plan may still be saving. Refresh in a moment, or build a new one."
+              : "If you've just paid, Stripe can take a few seconds to confirm. Refresh this page in a moment."}
           </p>
           <a className="btn block" href="/dashboard">
             Refresh

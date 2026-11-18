@@ -19,7 +19,7 @@ export function LoginForm() {
     const { error } = await createClient().auth.signInWithOtp({
       email: email.trim().toLowerCase(),
       // Only people who've bought a plan have an account.
-      options: { shouldCreateUser: false },
+      options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/dashboard` },
     });
     if (error) {
       // Don't reveal whether an account exists.

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { createClient as createSupabase } from "@supabase/supabase-js";
 import { stripe, SITE_URL } from "@/lib/stripe";
+import { stripeConfigured } from "@/lib/config";
 import { createAdminClient, findOrCreateUser } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -16,6 +17,11 @@ export const dynamic = "force-dynamic";
  *  5. Email a magic link so they can open their dashboard on any device.
  */
 export async function POST(req: Request) {
+  // Works whatever NEXT_PUBLIC_FREE_BETA is, so a payment already in flight
+  // when you flip the flag still unlocks. Without Stripe keys it does nothing.
+  if (!stripeConfigured()) {
+    return NextResponse.json({ error: "Stripe is not configured" }, { status: 503 });
+  }
   const signature = req.headers.get("stripe-signature");
   const raw = await req.text();
   let event: Stripe.Event;

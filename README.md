@@ -57,6 +57,21 @@ middleware.ts                  Session refresh + /dashboard guard
 
 ---
 
+## Free beta mode (no Stripe)
+
+`NEXT_PUBLIC_FREE_BETA` controls how plans unlock:
+
+| `NEXT_PUBLIC_FREE_BETA` | What happens |
+|---|---|
+| `true` | No paywall. After the wizard, the full dashboard works straight away with an **"Unlock My Free LeavePath Plan"** card. They enter an email: a new email is signed in and taken straight to their saved dashboard (with a magic link emailed for next time); an existing email gets a magic link that opens the new plan. Stripe variables can be empty. |
+| `false` | The original paid flow: blurred preview → Stripe Checkout → webhook unlocks the plan. Needs the 3 Stripe variables. |
+
+The flag is read when Vercel builds the app, so **redeploy after changing it** (Vercel → Deployments → ⋯ → Redeploy).
+
+A beta plan is only added to an account when the signed-in owner of that email opens it (`/dashboard?claim=…`), so typing someone else's email can't put a plan in their account. Beta plans are stored like paid plans (`paid = true`, `stripe_session_id = "beta:<id>"`, `amount_paid = 0`), so they stay unlocked when you switch to paid mode.
+
+---
+
 ## Setup (about 20 minutes)
 
 ### 1. Install
@@ -69,10 +84,10 @@ cp .env.example .env.local
 ### 2. Supabase
 
 1. Create a project, then fill in `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY`.
-2. Run `supabase/migrations/0001_init.sql`, using the SQL editor or `supabase db push`.
+2. Run `supabase/migrations/0001_init.sql`, then `0002_free_beta.sql`, using the SQL editor or `supabase db push`.
 3. Go to **Authentication → URL Configuration**:
    - Set the Site URL to `https://leavepath.co.uk` (`http://localhost:3000` locally).
-   - Add `/auth/confirm` and `/dashboard` to the redirect allow list.
+   - Add `https://leavepath.co.uk/**` (and `http://localhost:3000/**`) to Redirect URLs.
 4. Go to **Authentication → Emails → Magic Link** and paste `supabase/templates/magic_link.html` in as the template body.
    - **This step is required.** The link must go to `/auth/confirm?token_hash=…`.
    - The webhook sends the link from the server, so there's no browser code verifier for the default PKCE link to use.
@@ -81,7 +96,7 @@ cp .env.example .env.local
    - The login page uses `shouldCreateUser: false`, so only paying customers get accounts.
 6. For production, add your own SMTP provider (Resend, Postmark, etc.). Supabase's built-in email is heavily rate-limited.
 
-### 3. Stripe
+### 3. Stripe (skip while `NEXT_PUBLIC_FREE_BETA=true`)
 
 1. Create a product, "LeavePath Plan", with a **one-off price**. Put its ID in `STRIPE_PRICE_ID`.
 2. Put your secret key in `STRIPE_SECRET_KEY`.

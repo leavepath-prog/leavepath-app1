@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { loadIntake } from "@/components/intake/IntakeWizard";
-import type { Intake } from "@/lib/types";
+import { FREE_BETA } from "@/lib/config";
+import type { Intake, Scenario } from "@/lib/types";
 
 export function PreviewClient() {
   const router = useRouter();
   const params = useSearchParams();
   const [intake, setIntake] = useState<Intake | null>(null);
+  const scenario = useRef<Scenario>({});
 
   useEffect(() => {
     const saved = loadIntake();
@@ -19,19 +21,115 @@ export function PreviewClient() {
 
   if (!intake) return null;
 
+  const editLink = (
+    <a className="small" href="/start">
+      Edit answers
+    </a>
+  );
+
+  // Free beta: no paywall. The full dashboard works straight away, with a
+  // card to save it to an account (and keep slider changes).
+  if (FREE_BETA) {
+    return (
+      <Dashboard
+        intake={intake}
+        headerRight={editLink}
+        onScenarioChange={(s) => {
+          scenario.current = s;
+        }}
+        topSlot={<BetaSavePanel intake={intake} scenario={scenario} />}
+      />
+    );
+  }
+
   return (
     <Dashboard
       intake={intake}
       locked
-      headerRight={
-        <a className="small" href="/start">
-          Edit answers
-        </a>
-      }
+      headerRight={editLink}
       lockedPanel={<UnlockPanel intake={intake} cancelled={params.get("cancelled") === "1"} />}
     />
   );
 }
+
+/* ───────── Free beta: save the plan to an account ───────── */
+
+function BetaSavePanel({ intake, scenario }: { intake: Intake; scenario: { current: Scenario } }) {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "busy" | "check-email">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function unlock(e: React.FormEvent) {
+    e.preventDefault();
+    setState("busy");
+    setError(null);
+    try {
+      const res = await fetch("/api/beta-unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, intake, scenario: scenario.current }),
+      });
+      const data = (await res.json()) as { redirect?: string; status?: string; error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
+      if (data.redirect) {
+        window.location.href = data.redirect; // signs in and opens the saved dashboard
+        return;
+      }
+      setState("check-email");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setState("idle");
+    }
+  }
+
+  if (state === "check-email") {
+    return (
+      <div className="card stack no-print" role="status" style={{ gap: 8 }}>
+        <span className="eyebrow">Check your inbox</span>
+        <h2 className="card-title">You already have a LeavePath account</h2>
+        <p className="small" style={{ margin: 0 }}>
+          We've emailed a sign-in link to <strong>{email}</strong>. Tap it to open this plan in your dashboard. It
+          works on any device.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form className="card stack no-print" onSubmit={unlock} style={{ gap: 12 }}>
+      <div className="row between wrap">
+        <span className="eyebrow">Free during beta</span>
+        <span className="pill">No card needed</span>
+      </div>
+      <h2 className="card-title">Unlock My Free LeavePath Plan</h2>
+      <p className="small muted" style={{ margin: 0 }}>
+        Save your plan to keep your slider changes and checklist, and log back in any time with a magic link.
+      </p>
+      <label className="field">
+        <span className="label">Your email</span>
+        <input
+          className="input"
+          type="email"
+          required
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+        />
+      </label>
+      {error && (
+        <p className="pill warn" role="alert">
+          {error}
+        </p>
+      )}
+      <button className="btn block" type="submit" disabled={state === "busy"}>
+        {state === "busy" ? "Unlocking your plan…" : "Unlock My Free LeavePath Plan"}
+      </button>
+    </form>
+  );
+}
+
+/* ───────── Paid: Stripe Checkout (NEXT_PUBLIC_FREE_BETA=false) ───────── */
 
 function UnlockPanel({ intake, cancelled }: { intake: Intake; cancelled: boolean }) {
   const [email, setEmail] = useState("");
@@ -79,7 +177,11 @@ function UnlockPanel({ intake, cancelled }: { intake: Intake; cancelled: boolean
           placeholder="you@example.com"
         />
       </label>
-      {error && <p className="pill warn" role="alert">{error}</p>}
+      {error && (
+        <p className="pill warn" role="alert">
+          {error}
+        </p>
+      )}
       <button className="btn block" type="submit" disabled={busy}>
         {busy ? "Opening secure checkout…" : "Unlock my plan"}
       </button>

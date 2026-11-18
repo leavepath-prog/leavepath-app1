@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sanitizeIntake } from "@/lib/sanitizeIntake";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SITE_URL, stripe } from "@/lib/stripe";
+import { FREE_BETA, stripeConfigured } from "@/lib/config";
 
 export const runtime = "nodejs";
 
@@ -14,6 +15,13 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  * confirms payment.
  */
 export async function POST(req: Request) {
+  if (FREE_BETA) {
+    return NextResponse.json({ error: "Checkout is off during the free beta." }, { status: 404 });
+  }
+  if (!stripeConfigured()) {
+    console.error("Stripe env vars missing: STRIPE_SECRET_KEY, STRIPE_PRICE_ID, STRIPE_WEBHOOK_SECRET");
+    return NextResponse.json({ error: "Payments aren't set up yet. Please try again later." }, { status: 503 });
+  }
   let body: { email?: unknown; intake?: unknown };
   try {
     body = await req.json();

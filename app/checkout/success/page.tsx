@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { FREE_BETA } from "@/lib/config";
 import { stripe } from "@/lib/stripe";
 import { ResendLink } from "./ResendLink";
 
@@ -9,6 +11,7 @@ export default async function SuccessPage({
 }: {
   searchParams: Promise<{ session_id?: string }>;
 }) {
+  if (FREE_BETA) redirect("/dashboard");
   const { session_id } = await searchParams;
   let email: string | null = null;
   if (session_id && /^cs_[A-Za-z0-9_]+$/.test(session_id)) {

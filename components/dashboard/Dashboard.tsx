@@ -25,6 +25,8 @@ export interface DashboardProps {
   onScenarioChange?: (s: Scenario) => void;
   onChecksChange?: (c: TaskChecks) => void;
   headerRight?: ReactNode;
+  /** Rendered under the verdict banner on every tab (free-beta "save your plan" card). */
+  topSlot?: ReactNode;
   /** Day number for "today" (tests and screenshots); defaults to the real date. */
   today?: number;
   initialTab?: Tab;
@@ -46,6 +48,7 @@ export function Dashboard({
   onScenarioChange,
   onChecksChange,
   headerRight,
+  topSlot,
   today,
   initialTab = "overview",
 }: DashboardProps) {
@@ -151,6 +154,8 @@ export function Dashboard({
               <span className="small">{plan.verdict.detail}</span>
             </div>
           </div>
+
+          {topSlot}
 
           {locked ? (
             <div className="locked">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FREE_BETA } from "@/lib/config";
 
 export default function Home() {
   return (
@@ -21,7 +22,9 @@ export default function Home() {
           Build my plan (5 minutes)
         </Link>
         <p className="help" style={{ textAlign: "center" }}>
-          See your verdict free. Unlock the full dashboard with one payment.
+          {FREE_BETA
+            ? "Free during our beta. No card needed."
+            : "See your verdict free. Unlock the full dashboard with one payment."}
         </p>
       </div>
       <p className="help" style={{ marginTop: 40 }}>

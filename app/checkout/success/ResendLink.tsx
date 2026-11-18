@@ -20,7 +20,7 @@ export function ResendLink({ email }: { email: string | null }) {
     setState("sending");
     const { error } = await createClient().auth.signInWithOtp({
       email: email!,
-      options: { shouldCreateUser: false },
+      options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/dashboard` },
     });
     setState(error ? "error" : "sent");
   }
