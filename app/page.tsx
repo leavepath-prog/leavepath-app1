@@ -2,45 +2,394 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-stone-900 selection:bg-emerald-100">
-      {/* Top Navigation Header */}
-      <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-[#FAF9F6]/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-800 text-sm font-semibold text-white">
-              LP
-            </span>
-            <span className="text-lg font-semibold tracking-tight text-stone-900">
-              LeavePath
-            </span>
+    <div className="lp-root">
+      <style>{`
+        .lp-root {
+          min-height: 100vh;
+          background-color: #FAF9F6;
+          color: #1C1917;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          line-height: 1.5;
+          margin: 0;
+        }
+        .lp-root * {
+          box-sizing: border-box;
+        }
+        .lp-container {
+          max-width: 1120px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+        /* Header */
+        .lp-header {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          background: rgba(250, 249, 246, 0.92);
+          backdrop-filter: blur(8px);
+          border-bottom: 1px solid #E7E5E4;
+        }
+        .lp-header-inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 70px;
+        }
+        .lp-brand {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          text-decoration: none;
+          color: #1C1917;
+          font-weight: 700;
+          font-size: 18px;
+          letter-spacing: -0.02em;
+        }
+        .lp-logo-badge {
+          width: 34px;
+          height: 34px;
+          border-radius: 9px;
+          background: #065F46;
+          color: #FFFFFF;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+          font-weight: 700;
+        }
+        .lp-nav {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+        }
+        .lp-nav a {
+          text-decoration: none;
+          color: #57534E;
+          font-size: 14px;
+          font-weight: 500;
+        }
+        .lp-nav a:hover {
+          color: #1C1917;
+        }
+        .lp-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .lp-btn-ghost {
+          text-decoration: none;
+          color: #44403C;
+          font-size: 14px;
+          font-weight: 500;
+          padding: 8px 14px;
+          border-radius: 8px;
+        }
+        .lp-btn-ghost:hover {
+          background: #EFECE6;
+        }
+        .lp-btn-primary {
+          text-decoration: none;
+          background: #065F46;
+          color: #FFFFFF;
+          font-size: 14px;
+          font-weight: 600;
+          padding: 10px 18px;
+          border-radius: 9px;
+          display: inline-block;
+        }
+        .lp-btn-primary:hover {
+          background: #064E3B;
+        }
+        .lp-btn-secondary {
+          text-decoration: none;
+          background: #FFFFFF;
+          color: #1C1917;
+          border: 1px solid #D6D3D1;
+          font-size: 15px;
+          font-weight: 600;
+          padding: 13px 22px;
+          border-radius: 11px;
+          display: inline-block;
+        }
+        .lp-btn-large {
+          font-size: 15px;
+          padding: 14px 24px;
+          border-radius: 11px;
+        }
+        /* Hero */
+        .lp-hero {
+          padding: 72px 0 64px;
+          text-align: center;
+        }
+        .lp-hero-inner {
+          max-width: 740px;
+          margin: 0 auto;
+        }
+        .lp-pill {
+          display: inline-block;
+          background: #ECFDF5;
+          border: 1px solid #A7F3D0;
+          color: #065F46;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 6px 14px;
+          border-radius: 999px;
+          margin-bottom: 20px;
+        }
+        .lp-h1 {
+          font-size: clamp(34px, 5vw, 50px);
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          line-height: 1.12;
+          margin: 0 0 20px;
+          color: #1C1917;
+        }
+        .lp-subtitle {
+          font-size: 18px;
+          color: #57534E;
+          line-height: 1.6;
+          margin: 0 0 32px;
+        }
+        .lp-hero-cta {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 12px;
+        }
+        .lp-trust {
+          margin-top: 16px;
+          font-size: 13px;
+          color: #78716C;
+        }
+        /* Sections */
+        .lp-section-white {
+          background: #FFFFFF;
+          border-top: 1px solid #E7E5E4;
+          border-bottom: 1px solid #E7E5E4;
+          padding: 72px 0;
+        }
+        .lp-section-cream {
+          padding: 72px 0;
+        }
+        .lp-eyebrow {
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #065F46;
+          margin: 0 0 8px;
+        }
+        .lp-h2 {
+          font-size: 30px;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          margin: 0 0 12px;
+          color: #1C1917;
+        }
+        .lp-section-desc {
+          font-size: 16px;
+          color: #57534E;
+          max-width: 620px;
+          margin: 0 0 40px;
+        }
+        /* Grids & Cards */
+        .lp-grid-3 {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 22px;
+        }
+        .lp-grid-2 {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+          gap: 26px;
+        }
+        .lp-card-cream {
+          background: #FAF9F6;
+          border: 1px solid #E7E5E4;
+          border-radius: 16px;
+          padding: 24px;
+        }
+        .lp-card-white {
+          background: #FFFFFF;
+          border: 1px solid #E7E5E4;
+          border-radius: 18px;
+          padding: 28px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .lp-accent-bar {
+          width: 32px;
+          height: 6px;
+          border-radius: 999px;
+          background: #065F46;
+          margin-bottom: 14px;
+        }
+        .lp-card-title {
+          font-size: 17px;
+          font-weight: 600;
+          margin: 0 0 8px;
+          color: #1C1917;
+        }
+        .lp-card-text {
+          font-size: 14px;
+          color: #57534E;
+          line-height: 1.6;
+          margin: 0;
+        }
+        /* Worked Examples */
+        .lp-tag-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 14px;
+        }
+        .lp-tag-green {
+          background: #ECFDF5;
+          color: #065F46;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 4px 10px;
+          border-radius: 6px;
+        }
+        .lp-tag-amber {
+          background: #FFFBEB;
+          color: #92400E;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 4px 10px;
+          border-radius: 6px;
+        }
+        .lp-meta {
+          font-size: 12px;
+          color: #78716C;
+        }
+        .lp-stats-box {
+          margin-top: 20px;
+          background: #F5F5F4;
+          border-radius: 12px;
+          padding: 16px;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          text-align: center;
+        }
+        .lp-stat-label {
+          font-size: 11px;
+          color: #78716C;
+          margin: 0 0 4px;
+        }
+        .lp-stat-val {
+          font-size: 16px;
+          font-weight: 700;
+          color: #1C1917;
+          margin: 0;
+        }
+        .lp-stat-val-green {
+          font-size: 16px;
+          font-weight: 700;
+          color: #065F46;
+          margin: 0;
+        }
+        /* Testimonials */
+        .lp-quote-card {
+          background: #FAF9F6;
+          border: 1px solid #E7E5E4;
+          border-radius: 16px;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .lp-quote-text {
+          font-size: 14px;
+          color: #44403C;
+          line-height: 1.65;
+          margin: 0 0 20px;
+        }
+        .lp-quote-footer {
+          border-top: 1px solid #E7E5E4;
+          padding-top: 14px;
+        }
+        .lp-quote-author {
+          font-size: 14px;
+          font-weight: 600;
+          color: #1C1917;
+          margin: 0;
+        }
+        .lp-quote-detail {
+          font-size: 12px;
+          color: #78716C;
+          margin: 2px 0 0;
+        }
+        /* Bottom Banner */
+        .lp-cta-banner {
+          background: #064E3B;
+          color: #FFFFFF;
+          border-radius: 24px;
+          padding: 52px 28px;
+          text-align: center;
+        }
+        .lp-cta-banner h2 {
+          font-size: 32px;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          margin: 0 0 14px;
+        }
+        .lp-cta-banner p {
+          color: #D1FAE5;
+          max-width: 580px;
+          margin: 0 auto 28px;
+          font-size: 16px;
+        }
+        .lp-btn-white {
+          background: #FFFFFF;
+          color: #064E3B;
+          text-decoration: none;
+          font-weight: 700;
+          font-size: 15px;
+          padding: 14px 26px;
+          border-radius: 11px;
+          display: inline-block;
+        }
+        /* Footer */
+        .lp-footer {
+          border-top: 1px solid #E7E5E4;
+          padding: 36px 0;
+          font-size: 12px;
+          color: #78716C;
+        }
+        .lp-footer-inner {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        @media (max-width: 768px) {
+          .lp-nav { display: none; }
+          .lp-stats-box { grid-template-columns: 1fr; }
+        }
+      `}</style>
+
+      {/* Top Navigation */}
+      <header className="lp-header">
+        <div className="lp-container lp-header-inner">
+          <Link href="/" className="lp-brand">
+            <span className="lp-logo-badge">LP</span>
+            <span>LeavePath</span>
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium text-stone-600 md:flex">
-            <a href="#benefits" className="transition hover:text-stone-900">
-              What it covers
-            </a>
-            <a href="#examples" className="transition hover:text-stone-900">
-              Worked examples
-            </a>
-            <a href="#testimonials" className="transition hover:text-stone-900">
-              Parent stories
-            </a>
-            <a href="#how-it-works" className="transition hover:text-stone-900">
-              How it works
-            </a>
+          <nav className="lp-nav">
+            <a href="#benefits">What it covers</a>
+            <a href="#examples">Worked examples</a>
+            <a href="#testimonials">Parent stories</a>
+            <a href="#how-it-works">How it works</a>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-lg px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-200/60"
-            >
+          <div className="lp-actions">
+            <Link href="/login" className="lp-btn-ghost">
               Sign in
             </Link>
-            <Link
-              href="/plan"
-              className="rounded-lg bg-emerald-800 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-900"
-            >
+            <Link href="/plan" className="lp-btn-primary">
               Build my plan
             </Link>
           </div>
@@ -48,60 +397,47 @@ export default function HomePage() {
       </header>
 
       <main>
-        {/* Hero Section */}
-        <section className="mx-auto max-w-6xl px-4 pb-16 pt-14 sm:px-6 sm:pt-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1 text-xs font-medium text-emerald-900">
-              Updated for 2026/27 & 2027/28 UK statutory rates
-            </div>
-            <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl sm:leading-[1.12]">
+        {/* Hero */}
+        <section className="lp-hero">
+          <div className="lp-container lp-hero-inner">
+            <span className="lp-pill">
+              Updated for 2026/27 &amp; 2027/28 UK statutory rates
+            </span>
+            <h1 className="lp-h1">
               Know exactly how parental leave affects your money.
             </h1>
-            <p className="mt-5 text-lg leading-relaxed text-stone-600">
+            <p className="lp-subtitle">
               Model your month-by-month take-home pay across enhanced company
               leave, SMP (£194.32/wk rising to £201.11/wk in April 2027), Shared
               Parental Leave, and your return-to-work pattern—in five minutes.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
-                href="/plan"
-                className="w-full rounded-xl bg-emerald-800 px-6 py-3.5 text-base font-medium text-white shadow-sm transition hover:bg-emerald-900 sm:w-auto"
-              >
+            <div className="lp-hero-cta">
+              <Link href="/plan" className="lp-btn-primary lp-btn-large">
                 Build my plan (5 minutes)
               </Link>
-              <a
-                href="#examples"
-                className="w-full rounded-xl border border-stone-300 bg-white px-6 py-3.5 text-base font-medium text-stone-800 transition hover:bg-stone-50 sm:w-auto"
-              >
+              <a href="#examples" className="lp-btn-secondary">
                 See worked examples
               </a>
             </div>
-            <p className="mt-4 text-xs text-stone-500">
+            <p className="lp-trust">
               Free to model • No spreadsheets required • Built for UK parents
             </p>
           </div>
         </section>
 
-        {/* Benefits Section */}
-        <section
-          id="benefits"
-          className="border-y border-stone-200/80 bg-white py-16 sm:py-20"
-        >
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
-                Why parents use LeavePath
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">
-                Every pay cliff, tax quirk, and childcare rule in one place
-              </h2>
-              <p className="mt-3 text-base text-stone-600">
-                HR policy PDFs only tell you gross percentages. LeavePath models
-                what actually lands in your joint account every month.
-              </p>
-            </div>
+        {/* Benefits */}
+        <section id="benefits" className="lp-section-white">
+          <div className="lp-container">
+            <p className="lp-eyebrow">Why parents use LeavePath</p>
+            <h2 className="lp-h2">
+              Every pay cliff, tax quirk, and childcare rule in one place
+            </h2>
+            <p className="lp-section-desc">
+              HR policy PDFs only tell you gross percentages. LeavePath models
+              what actually lands in your joint account every month.
+            </p>
 
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="lp-grid-3">
               {[
                 {
                   title: "Month-by-month household cashflow",
@@ -128,128 +464,107 @@ export default function HomePage() {
                   desc: "Turn your chosen return pattern into a structured, statutory-compliant UK flexible working proposal ready to send to HR.",
                 },
               ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-stone-200/90 bg-[#FAF9F6] p-6"
-                >
-                  <div className="mb-3 h-2 w-8 rounded-full bg-emerald-800" />
-                  <h3 className="text-base font-semibold text-stone-900">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                    {item.desc}
-                  </p>
+                <div key={item.title} className="lp-card-cream">
+                  <div className="lp-accent-bar" />
+                  <h3 className="lp-card-title">{item.title}</h3>
+                  <p className="lp-card-text">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Worked Examples Section */}
-        <section id="examples" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
-              Worked Examples
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">
+        {/* Worked Examples */}
+        <section id="examples" className="lp-section-cream">
+          <div className="lp-container">
+            <p className="lp-eyebrow">Worked Examples</p>
+            <h2 className="lp-h2">
               Real scenarios UK families model before locking in dates
             </h2>
-          </div>
+            <p className="lp-section-desc">
+              See how enhanced leave, KIT days, accrued holiday, and part-time
+              return patterns play out in net pounds.
+            </p>
 
-          <div className="mt-10 grid gap-8 lg:grid-cols-2">
-            {/* Example 1 */}
-            <div className="rounded-2xl border border-stone-200 bg-white p-7 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-900">
-                  Scenario A • 12 Months Leave + KIT Days
-                </span>
-                <span className="text-xs text-stone-500">£68k + £52k household</span>
-              </div>
-              <h3 className="mt-4 text-xl font-semibold text-stone-900">
-                Smoothing the Months 7–12 statutory & unpaid dip
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                16 weeks full pay, 10 weeks 50% pay, 13 weeks SMP (£194.32/wk),
-                then 13 weeks unpaid—using 10 KIT days and 22 accrued holiday
-                days at month 12.
-              </p>
-              <div className="mt-5 grid grid-cols-3 gap-3 rounded-xl bg-stone-50 p-4 text-center">
-                <div>
-                  <p className="text-xs text-stone-500">Savings buffer needed</p>
-                  <p className="mt-1 text-base font-semibold text-stone-900">
-                    £6,450
-                  </p>
+            <div className="lp-grid-2">
+              <div className="lp-card-white">
+                <div className="lp-tag-row">
+                  <span className="lp-tag-green">
+                    Scenario A • 12 Months Leave + KIT Days
+                  </span>
+                  <span className="lp-meta">£68k + £52k household</span>
                 </div>
-                <div>
-                  <p className="text-xs text-stone-500">KIT + leave boost</p>
-                  <p className="mt-1 text-base font-semibold text-emerald-800">
-                    +£4,120 net
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-stone-500">Tax refund due</p>
-                  <p className="mt-1 text-base font-semibold text-stone-900">
-                    £1,180
-                  </p>
+                <h3 className="lp-card-title" style={{ fontSize: "20px" }}>
+                  Smoothing the Months 7–12 statutory &amp; unpaid dip
+                </h3>
+                <p className="lp-card-text">
+                  16 weeks full pay, 10 weeks 50% pay, 13 weeks SMP (£194.32/wk),
+                  then 13 weeks unpaid—using 10 KIT days and 22 accrued holiday
+                  days at month 12.
+                </p>
+                <div className="lp-stats-box">
+                  <div>
+                    <p className="lp-stat-label">Savings buffer needed</p>
+                    <p className="lp-stat-val">£6,450</p>
+                  </div>
+                  <div>
+                    <p className="lp-stat-label">KIT + leave boost</p>
+                    <p className="lp-stat-val-green">+£4,120 net</p>
+                  </div>
+                  <div>
+                    <p className="lp-stat-label">Tax refund due</p>
+                    <p className="lp-stat-val">£1,180</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Example 2 */}
-            <div className="rounded-2xl border border-stone-200 bg-white p-7 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="rounded-md bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-900">
-                  Scenario B • Return to Work Pattern
-                </span>
-                <span className="text-xs text-stone-500">£95k salary + nursery</span>
-              </div>
-              <h3 className="mt-4 text-xl font-semibold text-stone-900">
-                4 days/week vs 5 days/week with 1 child in nursery
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                Comparing 80% hours (£76k) and 3 nursery days against 100% hours
-                (£95k) and 4 nursery days—including pension sacrifice impact.
-              </p>
-              <div className="mt-5 grid grid-cols-3 gap-3 rounded-xl bg-stone-50 p-4 text-center">
-                <div>
-                  <p className="text-xs text-stone-500">Gross pay diff</p>
-                  <p className="mt-1 text-base font-semibold text-stone-900">
-                    -£1,583/mo
-                  </p>
+              <div className="lp-card-white">
+                <div className="lp-tag-row">
+                  <span className="lp-tag-amber">
+                    Scenario B • Return to Work Pattern
+                  </span>
+                  <span className="lp-meta">£95k salary + nursery</span>
                 </div>
-                <div>
-                  <p className="text-xs text-stone-500">Net diff after nursery</p>
-                  <p className="mt-1 text-base font-semibold text-emerald-800">
-                    Only -£490/mo
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-stone-500">Extra day at home</p>
-                  <p className="mt-1 text-base font-semibold text-stone-900">
-                    52 days/yr
-                  </p>
+                <h3 className="lp-card-title" style={{ fontSize: "20px" }}>
+                  4 days/week vs 5 days/week with 1 child in nursery
+                </h3>
+                <p className="lp-card-text">
+                  Comparing 80% hours (£76k) and 3 nursery days against 100%
+                  hours (£95k) and 4 nursery days—including pension sacrifice
+                  impact.
+                </p>
+                <div className="lp-stats-box">
+                  <div>
+                    <p className="lp-stat-label">Gross pay diff</p>
+                    <p className="lp-stat-val">-£1,583/mo</p>
+                  </div>
+                  <div>
+                    <p className="lp-stat-label">Net diff after nursery</p>
+                    <p className="lp-stat-val-green">Only -£490/mo</p>
+                  </div>
+                  <div>
+                    <p className="lp-stat-label">Extra day at home</p>
+                    <p className="lp-stat-val">52 days/yr</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section
-          id="testimonials"
-          className="border-y border-stone-200/80 bg-white py-16 sm:py-20"
-        >
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
-                What Parents Say
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">
-                Built to replace messy weekend spreadsheets
-              </h2>
-            </div>
+        {/* Testimonials */}
+        <section id="testimonials" className="lp-section-white">
+          <div className="lp-container">
+            <p className="lp-eyebrow">What Parents Say</p>
+            <h2 className="lp-h2">
+              Built to replace messy weekend spreadsheets
+            </h2>
+            <p className="lp-section-desc">
+              How couples use LeavePath to plan leave length and return hours
+              with confidence.
+            </p>
 
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="lp-grid-3">
               {[
                 {
                   quote:
@@ -270,40 +585,28 @@ export default function HomePage() {
                   detail: "Bristol • Shared Parental Leave",
                 },
               ].map((t) => (
-                <figure
-                  key={t.author}
-                  className="flex flex-col justify-between rounded-2xl border border-stone-200 bg-[#FAF9F6] p-6"
-                >
-                  <blockquote className="text-sm leading-relaxed text-stone-700">
-                    “{t.quote}”
-                  </blockquote>
-                  <figcaption className="mt-5 border-t border-stone-200/80 pt-4">
-                    <p className="text-sm font-semibold text-stone-900">
-                      {t.author}
-                    </p>
-                    <p className="text-xs text-stone-500">{t.detail}</p>
-                  </figcaption>
-                </figure>
+                <div key={t.author} className="lp-quote-card">
+                  <p className="lp-quote-text">“{t.quote}”</p>
+                  <div className="lp-quote-footer">
+                    <p className="lp-quote-author">{t.author}</p>
+                    <p className="lp-quote-detail">{t.detail}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* How It Works + Bottom CTA */}
-        <section id="how-it-works" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-          <div className="rounded-3xl bg-emerald-900 px-6 py-12 text-center text-white sm:px-12">
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Build your personalised parental leave plan in 5 minutes
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-base text-emerald-100">
-              Enter your due date, salaries, and employer policy to get a clear
-              month-by-month pay timeline and return-to-work comparison.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Link
-                href="/plan"
-                className="rounded-xl bg-white px-7 py-3.5 text-base font-semibold text-emerald-950 shadow-sm transition hover:bg-emerald-50"
-              >
+        {/* Bottom CTA */}
+        <section id="how-it-works" className="lp-section-cream">
+          <div className="lp-container">
+            <div className="lp-cta-banner">
+              <h2>Build your personalised parental leave plan in 5 minutes</h2>
+              <p>
+                Enter your due date, salaries, and employer policy to get a
+                clear month-by-month pay timeline and return-to-work comparison.
+              </p>
+              <Link href="/plan" className="lp-btn-white">
                 Start my free plan →
               </Link>
             </div>
@@ -312,13 +615,13 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200 bg-[#FAF9F6] py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-xs text-stone-500 sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} LeavePath. Built for UK families.</p>
-          <p>
-            Guidance & financial modelling tool only—not regulated financial or
-            legal advice.
-          </p>
+      <footer className="lp-footer">
+        <div className="lp-container lp-footer-inner">
+          <span>© 2026 LeavePath. Built for UK families.</span>
+          <span>
+            Guidance &amp; financial modelling tool only—not regulated financial
+            or legal advice.
+          </span>
         </div>
       </footer>
     </div>
